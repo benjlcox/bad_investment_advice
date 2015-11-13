@@ -44,7 +44,7 @@ class StockTwits
 
   def self.last_message_ids
     file = File.exists?('last_ids.json') ? File.read('last_ids.json') : File.open('last_ids.json', 'w'){|f| f.write('{}')}
-    JSON.parse(File.read(file))
+    JSON.parse(file)
   end
 
   def self.save_to_file(response)
