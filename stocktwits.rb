@@ -10,7 +10,8 @@ class StockTwits
 
     SYMBOLS.each do |symbol|
       puts "Fetching #{symbol}..."
-      response = HTTParty.get("https://api.stocktwits.com/api/2/streams/symbol/#{symbol}.json?since=#{last_message_ids[symbol]}", :verify => false)
+      params = "?since#{last_message_ids[symbol]}" unless last_message_ids[symbol].nil?
+      response = HTTParty.get("https://api.stocktwits.com/api/2/streams/symbol/#{symbol}.json#{params}", :verify => false)
 
       if response['messages'].empty?
         puts "Empty. Skipping."
@@ -43,8 +44,9 @@ class StockTwits
   end
 
   def self.last_message_ids
-    file = File.exists?('last_ids.json') ? File.read('last_ids.json') : File.open('last_ids.json', 'w'){|f| f.write('{}')}
-    JSON.parse(file)
+    File.exists?('last_ids.json') ? File.read('last_ids.json') : File.open('last_ids.json', 'w'){|f| f.write('{}')}
+    sleep 3
+    JSON.parse(File.read('last_ids.json'))
   end
 
   def self.save_to_file(response)
