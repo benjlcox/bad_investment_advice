@@ -36,14 +36,15 @@ class StockTwits
   private
 
   def self.record_last_id(symbol, response)
-    file = File.exists?('last_ids.json') ? File.read('last_ids.json') : File.open('last_ids.json', 'w'){|f| f.write('{}')}
+    file = File.read('last_ids.json')
     ids = JSON.parse(file)
     ids[symbol] = response['messages'].first['id'].to_s
     File.open('last_ids.json', 'w') {|f| f.write(ids.to_json) }
   end
 
   def self.last_message_ids
-    JSON.parse(File.read('last_ids.json'))
+    file = File.exists?('last_ids.json') ? File.read('last_ids.json') : File.open('last_ids.json', 'w'){|f| f.write('{}')}
+    JSON.parse(File.read(file))
   end
 
   def self.save_to_file(response)
