@@ -1,6 +1,5 @@
 require 'sinatra'
 require 'httparty'
-require 'byebug'
 require 'marky_markov'
 
 SYMBOLS = %w( SHOP FB ETSY TWTR GPRO AMZN GOOG AAPL BBRY GRPN TSLA NFLX CRM BABA )
