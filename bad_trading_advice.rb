@@ -3,6 +3,7 @@ require './db/db'
 require './stocktwits'
 
 get '/' do
+  StockTwits.generate_markov
   StockTwits.new_sentence
 end
 
