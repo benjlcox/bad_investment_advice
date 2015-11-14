@@ -1,4 +1,5 @@
 require 'sinatra'
+require './db/db'
 require './stocktwits'
 
 get '/' do

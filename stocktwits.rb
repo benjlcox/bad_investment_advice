@@ -1,24 +1,26 @@
 require 'httparty'
 require 'marky_markov'
 require 'json'
+require './db/db'
 
 class StockTwits
-  SYMBOLS = %w( SHOP FB ETSY TWTR GPRO AMZN GOOG AAPL BBRY GRPN TSLA NFLX CRM BABA )
+  # SYMBOLS = %w( SHOP FB ETSY TWTR GPRO AMZN GOOG AAPL BBRY GRPN TSLA NFLX CRM BABA )
+  SYMBOLS = %w( SHOP )
 
   def self.fetch_twits
     last_ids = last_message_ids
 
     SYMBOLS.each do |symbol|
-      puts "Fetching #{symbol}..."
-      params = "?since#{last_message_ids[symbol]}" unless last_message_ids[symbol].nil?
-      response = HTTParty.get("https://api.stocktwits.com/api/2/streams/symbol/#{symbol}.json#{params}", :verify => false)
+      params = "?since=#{last_ids[symbol]}" unless last_ids[symbol].nil?
+      url = "https://api.stocktwits.com/api/2/streams/symbol/#{symbol}.json#{params}"
+      puts "Fetching #{symbol} with #{url}"
+      response = HTTParty.get(url, :verify => false)
 
       if response['messages'].empty?
         puts "Empty. Skipping."
         next
       end
 
-      record_last_id(symbol, response)
       save_to_file(response)
     end
   end
@@ -36,24 +38,19 @@ class StockTwits
 
   private
 
-  def self.record_last_id(symbol, response)
-    file = File.read('last_ids.json')
-    ids = JSON.parse(file)
-    ids[symbol] = response['messages'].first['id'].to_s
-    File.open('last_ids.json', 'w') {|f| f.write(ids.to_json) }
-  end
-
   def self.last_message_ids
-    File.exists?('last_ids.json') ? File.read('last_ids.json') : File.open('last_ids.json', 'w'){|f| f.write('{}')}
-    sleep 3
-    JSON.parse(File.read('last_ids.json'))
+    SYMBOLS.each_with_object({}) do |symbol, obj|
+      obj[symbol] = Twit.where(stock: symbol).maximum(:key)
+    end
   end
 
   def self.save_to_file(response)
-    File.open('twits.txt', 'a') do |file|
-      response['messages'].each do |message|
-        file.puts message['body']
-      end
+    response['messages'].each do |message|
+      Twit.create(
+        stock: response['symbol']['symbol'],
+        key: message['id'],
+        body: message['body']
+      )
     end
   end
 end

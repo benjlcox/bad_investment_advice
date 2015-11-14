@@ -1,6 +1,9 @@
 source 'https://rubygems.org'
 gem 'sinatra'
+gem "sinatra-activerecord"
 gem 'httparty'
 gem 'marky_markov'
 gem 'rake'
 gem 'json'
+gem 'tux'
+gem 'pg'
