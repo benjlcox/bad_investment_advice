@@ -15,4 +15,13 @@ end
 
 class Twit < ActiveRecord::Base
 
+	def self.last_ids
+		StockTwits::SYMBOLS.each_with_object({}) do |symbol, obj|
+      obj[symbol] = Twit.where(stock: symbol).maximum(:key)
+    end
+	end
+
+	def self.all_twits
+		Twit.all.map { |twit| twit.body }
+	end
 end

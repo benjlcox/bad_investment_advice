@@ -7,9 +7,9 @@ get '/' do
 end
 
 get '/last_ids' do
-  JSON.parse(File.read('last_ids.json'))
+  Twit.last_ids.to_json
 end
 
 get '/messages' do
-  File.read('twits.txt')
+  Twit.all_twits.to_json
 end

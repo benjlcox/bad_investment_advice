@@ -4,8 +4,7 @@ require 'json'
 require './db/db'
 
 class StockTwits
-  # SYMBOLS = %w( SHOP FB ETSY TWTR GPRO AMZN GOOG AAPL BBRY GRPN TSLA NFLX CRM BABA )
-  SYMBOLS = %w( SHOP )
+  SYMBOLS = %w( SHOP FB ETSY TWTR GPRO AMZN GOOG AAPL BBRY GRPN TSLA NFLX CRM BABA )
 
   def self.fetch_twits
     last_ids = last_message_ids
@@ -27,7 +26,7 @@ class StockTwits
 
   def self.generate_markov
     markov = MarkyMarkov::Dictionary.new('dictionary')
-    markov.parse_file('twits.txt')
+    Twit.all.each { |twit| markov.parse_string(twit.body) }
     markov.save_dictionary!
   end
 
