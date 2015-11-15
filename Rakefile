@@ -9,6 +9,11 @@ require './db/db'
 namespace :twits do
   task :fetch => :dotenv do
     StockTwits.fetch_twits
+  end
+end
+
+namespace :markov do
+  task :generate => :dotenv do
     Markov.generate
   end
 end
