@@ -14,8 +14,8 @@ class S3
   end
 
   def upload(file)
-    File.open("./#{file}", 'rb') do |file|
-      @client.put_object(bucket: ENV['S3_BUCKET'], key: "file", body: file)
+    File.open("./#{file}", 'rb') do |content|
+      @client.put_object(bucket: ENV['S3_BUCKET'], key: file, body: content)
     end
   end
 

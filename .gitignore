@@ -1,4 +1,3 @@
-twits.txt
-dictionary.mmd
-last_ids.json
+dictionary-dev.mmd
+dictionary-prod.mmd
 .env

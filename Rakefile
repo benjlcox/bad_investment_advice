@@ -15,6 +15,6 @@ end
 
 namespace :dictionary do
   task :download => :dotenv do
-    S3.new.download(ENV['DICTIONARY'])
+    S3.new.download(ENV['DICTIONARY_FILE'])
   end
 end

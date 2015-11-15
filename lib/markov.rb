@@ -10,14 +10,14 @@ class Markov
   STOCK_REGEX = /\$[a-zA-Z]/
 
   def self.generate
-    markov = MarkyMarkov::Dictionary.new('dictionary')
+    markov = MarkyMarkov::Dictionary.new(ENV['DICTIONARY_NAME'])
     Twit.all.each { |twit| markov.parse_string(twit.body) }
     markov.save_dictionary!
-    S3.new.upload(ENV['DICTIONARY'])
+    S3.new.upload(ENV['DICTIONARY_FILE'])
   end
 
   def initialize
-    @markov = MarkyMarkov::Dictionary.new('dictionary')
+    @markov = MarkyMarkov::Dictionary.new(ENV['DICTIONARY_NAME'])
   end
 
   def generate_sentence
