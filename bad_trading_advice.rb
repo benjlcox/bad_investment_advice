@@ -1,6 +1,7 @@
 require 'sinatra'
 require './db/db'
 require './lib/stocktwits'
+require './lib/markov'
 
 get '/' do
   Markov.new.sentence
