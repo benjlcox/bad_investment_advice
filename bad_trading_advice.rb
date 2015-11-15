@@ -3,7 +3,7 @@ require './db/db'
 require './lib/stocktwits'
 
 get '/' do
-  StockTwits.new_sentence
+  Markov.new.sentence
 end
 
 get '/last_ids.json' do

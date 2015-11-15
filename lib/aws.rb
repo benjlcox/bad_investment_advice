@@ -1,4 +1,6 @@
 require 'aws-sdk'
+require 'dotenv'
+Dotenv.load
 
 class S3
   attr_reader :client

@@ -1,11 +1,12 @@
 require 'httparty'
-require 'marky_markov'
 require 'json'
+require 'dotenv'
+Dotenv.load
+
 require './db/db'
-require './lib/aws'
 
 class StockTwits
-  SYMBOLS = %w( SHOP FB ETSY TWTR GPRO AMZN GOOG AAPL BBRY GRPN TSLA NFLX CRM BABA )
+  SYMBOLS = ENV['SYMBOLS'].split(',')
 
   def self.fetch_twits
     last_ids = last_message_ids
@@ -23,18 +24,6 @@ class StockTwits
 
       save_to_db(response)
     end
-  end
-
-  def self.generate_markov
-    markov = MarkyMarkov::Dictionary.new('dictionary')
-    Twit.all.each { |twit| markov.parse_string(twit.body) }
-    markov.save_dictionary!
-    S3.new.upload('dictionary.mmd')
-  end
-
-  def self.new_sentence
-    markov = MarkyMarkov::Dictionary.new('dictionary')
-    markov.generate_n_sentences 1
   end
 
   private
