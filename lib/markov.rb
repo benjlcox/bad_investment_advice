@@ -24,17 +24,17 @@ class Markov
     loop do
       puts "Generating sentence..."
 
-      sentence = create_sentence
-      sentence = check_symbol(sentence)
-      sentence = scrub_links(sentence)
+      @advice = create_sentence
+      @advice = check_symbol(@advice)
+      @advice = scrub_links(@advice)
 
-      next if check_length(sentence)
-      next if contains_all_symbols(sentence)
+      next if check_length(@advice)
+      next if contains_all_symbols(@advice)
 
-      puts "Validated -> { #{sentence} }"
+      puts "Validated -> { #{@advice} }"
       break
     end
-    sentence
+    @advice
   end
 
   private
