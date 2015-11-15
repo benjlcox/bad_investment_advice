@@ -34,6 +34,7 @@ class Markov
       puts "Validated -> { #{sentence} }"
       break
     end
+    sentence
   end
 
   private
