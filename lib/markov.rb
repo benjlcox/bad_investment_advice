@@ -20,13 +20,14 @@ class Markov
     @markov = MarkyMarkov::Dictionary.new('dictionary')
   end
 
-  def sentence
+  def generate_sentence
     loop do
       puts "Generating sentence..."
 
       @advice = create_sentence
       @advice = check_symbol(@advice)
       @advice = scrub_links(@advice)
+      @advice = remove_bad_periods(@advice)
 
       next if check_length(@advice)
       next if contains_all_symbols(@advice)
@@ -44,7 +45,12 @@ class Markov
   end
 
   def scrub_links(sentence)
-    sentence.gsub('http://stks.', '')
+    sentence = sentence.gsub('http://stks.', '')
+    sentence.gsub(' chart', '')
+  end
+
+  def remove_bad_periods(sentence)
+    sentence.gsub(/\s\./, '')
   end
 
   def check_symbol(sentence)
