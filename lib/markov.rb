@@ -6,10 +6,13 @@ require './db/db'
 require './lib/aws'
 
 class Markov
+
   STOCK_REGEX = /\$[a-zA-Z]/
+
   def self.generate
-    Twit.all.each { |twit| @markov.parse_string(twit.body) }
-    MarkyMarkov::Dictionary.new('dictionary') .save_dictionary!
+    markov = MarkyMarkov::Dictionary.new('dictionary')
+    Twit.all.each { |twit| markov.parse_string(twit.body) }
+    markov.save_dictionary!
     S3.new.upload(ENV['DICTIONARY'])
   end
 
