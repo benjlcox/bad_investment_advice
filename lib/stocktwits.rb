@@ -2,6 +2,7 @@ require 'httparty'
 require 'marky_markov'
 require 'json'
 require './db/db'
+require './lib/aws'
 
 class StockTwits
   SYMBOLS = %w( SHOP FB ETSY TWTR GPRO AMZN GOOG AAPL BBRY GRPN TSLA NFLX CRM BABA )
@@ -20,7 +21,7 @@ class StockTwits
         next
       end
 
-      save_to_file(response)
+      save_to_db(response)
     end
   end
 
@@ -28,6 +29,7 @@ class StockTwits
     markov = MarkyMarkov::Dictionary.new('dictionary')
     Twit.all.each { |twit| markov.parse_string(twit.body) }
     markov.save_dictionary!
+    S3.new.upload('dictionary.mmd')
   end
 
   def self.new_sentence
@@ -43,7 +45,7 @@ class StockTwits
     end
   end
 
-  def self.save_to_file(response)
+  def self.save_to_db(response)
     response['messages'].each do |message|
       Twit.create(
         stock: response['symbol']['symbol'],

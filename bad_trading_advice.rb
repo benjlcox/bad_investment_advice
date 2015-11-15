@@ -1,16 +1,15 @@
 require 'sinatra'
 require './db/db'
-require './stocktwits'
+require './lib/stocktwits'
 
 get '/' do
-  StockTwits.generate_markov
   StockTwits.new_sentence
 end
 
-get '/last_ids' do
+get '/last_ids.json' do
   Twit.last_ids.to_json
 end
 
-get '/messages' do
+get '/messages.json' do
   Twit.all_twits.to_json
 end
