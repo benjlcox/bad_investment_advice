@@ -27,7 +27,7 @@ class Markov
       @advice = create_sentence
       @advice = check_symbol(@advice)
       @advice = scrub_links(@advice)
-      @advice = remove_bad_periods(@advice)
+      @advice = remove_bad_punctuation(@advice)
 
       next if check_length(@advice)
       next if contains_all_symbols(@advice)
@@ -45,19 +45,35 @@ class Markov
   end
 
   def scrub_links(sentence)
-    sentence = sentence.gsub('http://stks.', '')
-    sentence.gsub(' chart', '')
+    sentence = sentence.gsub('http://stks.', '') unless sentence.nil?
+    sentence = sentence.gsub(' chart', '') unless sentence.nil?
+    sentence = sentence.gsub(/co\/.{5}[\s\z]/,'') unless sentence.nil?
   end
 
-  def remove_bad_periods(sentence)
-    sentence.gsub(/\s\./, '')
+  def remove_bad_punctuation(sentence)
+    sentence.gsub(/\s\./, '').gsub(/"/, '').gsub(/:/,'')
   end
 
   def check_symbol(sentence)
-    if sentence =~ STOCK_REGEX
+    if name = sentence_has_company_name(sentence)
+      symbol = StockTwits::SYMBOLS.invert[name.capitalize]
+      sentence + " $" + symbol unless sentence =~ /#{symbol}/
+    elsif sentence =~ STOCK_REGEX
       sentence
     else
-      sentence + " $" + ENV['SYMBOLS'].split(',').sample
+      sentence + " $" + StockTwits::SYMBOLS.keys.sample
+    end
+  end
+
+  def sentence_has_company_name(sentence)
+    sentence = sentence.downcase.gsub(/\W+/, ' ').split(' ')
+    names = StockTwits::SYMBOLS.values.map{|name| name.downcase}
+
+    result = sentence & names
+    if result.empty?
+      false
+    else
+      result.sample
     end
   end
 

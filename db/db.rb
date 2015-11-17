@@ -16,7 +16,7 @@ end
 class Twit < ActiveRecord::Base
 
 	def self.last_ids
-		StockTwits::SYMBOLS.each_with_object({}) do |symbol, obj|
+		StockTwits::SYMBOLS.keys.each_with_object({}) do |symbol, obj|
       obj[symbol] = Twit.where(stock: symbol).maximum(:key)
     end
 	end
