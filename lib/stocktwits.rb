@@ -1,10 +1,15 @@
 require 'httparty'
 require 'json'
+require 'redis'
+require 'sidekiq'
+require 'sidekiq/api'
 require 'dotenv'
 Dotenv.load
 
 require './db/db'
 require './lib/markov'
+require './workers/post_worker'
+$redis = Redis.new(url: ENV["REDIS_URL"])
 
 class StockTwits
   SYMBOLS = {
@@ -13,6 +18,8 @@ class StockTwits
     "NFLX" => 'Netflix',"CRM" => 'Salesforce',"BABA" => 'Alibaba',"LNKD" => 'LinkedIn',
     "MSFT" => 'Microsoft',"YHOO" => 'Yahoo'
   }
+
+  POSTING_WINDOW = { start: Time.parse("9:30 am"), finish: Time.parse("4:45 pm") }
 
   def self.fetch_twits
     last_ids = last_message_ids
@@ -35,7 +42,18 @@ class StockTwits
   def self.post_message
     return unless should_send_message?
 
-    body = Markov.new.generate_sentence
+    message = Markov.new.generate_sentence
+    delay = (1..60).to_a.sample
+
+    if ENV['RACK_ENV'] == 'production'
+      puts "POST QUEUED FOR #{delay} MINUTES => #{message}"
+      PostWorker.perform_in(delay.minutes, message)
+    else
+      post_dev_message(delay, message)
+    end
+  end
+
+  def self.post_to_twits(message)
     url = "https://api.stocktwits.com/api/2/messages/create.json?access_token=#{ENV['STOCKTWITS_TOKEN']}&body=#{body}"
 
     puts "Sending #{url}"
@@ -51,8 +69,22 @@ class StockTwits
 
   private
 
-  def should_send_message?
-    true
+  def self.post_dev_message(delay, message)
+    puts "Delay: #{delay}, Message: << #{message} >>"
+  end
+
+  def self.should_send_message?
+    if (1..3).to_a.sample > 1 && in_posting_window?
+      true
+    else
+      puts 'Post skipped.'
+      false
+    end
+  end
+
+  def self.in_posting_window?
+    time = Time.now.in_time_zone('Eastern Time (US & Canada)')
+    time > POSTING_WINDOW[:start] && time < POSTING_WINDOW[:finish]
   end
 
   def self.last_message_ids

@@ -1,3 +1,4 @@
 dictionary-dev.mmd
 dictionary-prod.mmd
 .env
+dump.rdb

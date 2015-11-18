@@ -29,6 +29,7 @@ class Markov
       @advice = scrub_links(@advice)
       @advice = remove_bad_punctuation(@advice)
 
+      next if @advice.nil?
       next if check_length(@advice)
       next if contains_all_symbols(@advice)
 
@@ -45,13 +46,11 @@ class Markov
   end
 
   def scrub_links(sentence)
-    sentence = sentence.gsub('http://stks.', '') unless sentence.nil?
-    sentence = sentence.gsub(' chart', '') unless sentence.nil?
-    sentence = sentence.gsub(/co\/.{5}[\s\z]/,'') unless sentence.nil?
+    remove_matches(sentence, ['http://stks.', ' chart', /co\/.{5}[\s\z]/])
   end
 
   def remove_bad_punctuation(sentence)
-    sentence.gsub(/\s\./, '').gsub(/"/, '').gsub(/:/,'')
+    remove_matches(sentence, [/\s\./, /"/, /:/])
   end
 
   def check_symbol(sentence)
@@ -85,5 +84,13 @@ class Markov
 
   def check_length(sentence)
     sentence.length > 140 || sentence.length < 5
+  end
+
+  def remove_matches(sentence, patterns)
+    patterns.each do |pattern|
+      break if sentence.nil? || sentence.empty?
+      sentence = sentence.gsub(pattern, '')
+    end
+    sentence
   end
 end

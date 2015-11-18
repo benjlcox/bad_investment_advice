@@ -10,6 +10,10 @@ namespace :twits do
   task :fetch => :dotenv do
     StockTwits.fetch_twits
   end
+
+  task :post => :dotenv do
+    StockTwits.post_message
+  end
 end
 
 namespace :markov do
