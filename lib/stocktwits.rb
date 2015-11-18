@@ -19,7 +19,7 @@ class StockTwits
     "MSFT" => 'Microsoft',"YHOO" => 'Yahoo'
   }
 
-  POSTING_WINDOW = { start: Time.parse("9:30 am EST"), finish: Time.parse("4:45 pm EST") }
+  POSTING_WINDOW = { start: Time.parse("9:30 am EST"), finish: Time.parse("4:45 pm") }
 
   def self.fetch_twits
     last_ids = last_message_ids
@@ -54,7 +54,7 @@ class StockTwits
   end
 
   def self.post_to_twits(message)
-    url = "https://api.stocktwits.com/api/2/messages/create.json?access_token=#{ENV['STOCKTWITS_TOKEN']}&body=#{body}"
+    url = "https://api.stocktwits.com/api/2/messages/create.json?access_token=#{ENV['STOCKTWITS_TOKEN']}&body=#{message}"
 
     puts "Sending #{url}"
 
