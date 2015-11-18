@@ -28,6 +28,7 @@ class Markov
       @advice = check_symbol(@advice)
       @advice = scrub_links(@advice)
       @advice = remove_bad_punctuation(@advice)
+      @advice = @advice.humanize
 
       next if @advice.nil?
       next if check_length(@advice)
