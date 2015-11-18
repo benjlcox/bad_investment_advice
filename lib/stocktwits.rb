@@ -76,7 +76,7 @@ class StockTwits
   end
 
   def self.should_send_message?
-    if (1..3).to_a.sample > 1 && in_posting_window?
+    if (1..3).to_a.sample == 1 && in_posting_window?
       true
     else
       puts 'Post skipped.'
