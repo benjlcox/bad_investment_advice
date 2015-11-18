@@ -4,6 +4,7 @@ require 'sidekiq/api'
 
 require './lib/stocktwits'
 require './lib/aws'
+require './lib/aws'
 
 class PostWorker
   include Sidekiq::Worker
