@@ -9,8 +9,7 @@ require './lib/markov'
 class PostWorker
   include Sidekiq::Worker
 
-  def perform(message)
-    return unless message
+  def perform
     puts "Downloading dictionary..."
     S3.new.download(ENV['DICTIONARY_FILE'])
 
