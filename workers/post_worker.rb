@@ -11,7 +11,7 @@ class PostWorker
   def perform(message)
     return unless message
     S3.new.download(ENV['DICTIONARY_FILE'])
-    sleep(10)
+    Markov.generate
     StockTwits.post_to_twits(message)
   end
 
