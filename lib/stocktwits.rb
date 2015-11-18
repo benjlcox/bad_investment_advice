@@ -19,7 +19,7 @@ class StockTwits
     "MSFT" => 'Microsoft',"YHOO" => 'Yahoo'
   }
 
-  POSTING_WINDOW = { start: Time.parse("9:30 am"), finish: Time.parse("4:45 pm") }
+  POSTING_WINDOW = { start: Time.parse("9:30 am EST"), finish: Time.parse("4:45 pm EST") }
 
   def self.fetch_twits
     last_ids = last_message_ids
