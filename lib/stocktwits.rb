@@ -1,5 +1,6 @@
 require 'httparty'
 require 'json'
+require 'cgi'
 require 'redis'
 require 'sidekiq'
 require 'sidekiq/api'
@@ -54,7 +55,7 @@ class StockTwits
 
   def self.post_to_twits
     message = Markov.new.generate_sentence
-    url = "https://api.stocktwits.com/api/2/messages/create.json?access_token=#{ENV['STOCKTWITS_TOKEN']}&body=#{message}"
+    url = "https://api.stocktwits.com/api/2/messages/create.json?access_token=#{ENV['STOCKTWITS_TOKEN']}&body=#{CGI.escape(message)}"
 
     puts "Sending #{url}"
 
