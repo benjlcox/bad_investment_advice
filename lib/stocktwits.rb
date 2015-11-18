@@ -42,18 +42,18 @@ class StockTwits
   def self.post_message
     return unless should_send_message?
 
-    message = Markov.new.generate_sentence
     delay = (1..60).to_a.sample
 
     if ENV['RACK_ENV'] == 'production'
-      puts "POST QUEUED FOR #{delay} MINUTES => #{message}"
-      PostWorker.perform_in(delay.minutes, message)
+      puts "POST QUEUED FOR #{delay} MINUTES"
+      PostWorker.perform_in(delay.minutes)
     else
-      post_dev_message(delay, message)
+      post_dev_message(delay)
     end
   end
 
-  def self.post_to_twits(message)
+  def self.post_to_twits
+    message = Markov.new.generate_sentence
     url = "https://api.stocktwits.com/api/2/messages/create.json?access_token=#{ENV['STOCKTWITS_TOKEN']}&body=#{message}"
 
     puts "Sending #{url}"
@@ -69,7 +69,8 @@ class StockTwits
 
   private
 
-  def self.post_dev_message(delay, message)
+  def self.post_dev_message(delay)
+    message = Markov.new.generate_sentence
     puts "Delay: #{delay}, Message: << #{message} >>"
   end
 

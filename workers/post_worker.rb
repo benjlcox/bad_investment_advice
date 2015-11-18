@@ -4,7 +4,7 @@ require 'sidekiq/api'
 
 require './lib/stocktwits'
 require './lib/aws'
-require './lib/aws'
+require './lib/markov'
 
 class PostWorker
   include Sidekiq::Worker
@@ -14,15 +14,8 @@ class PostWorker
     puts "Downloading dictionary..."
     S3.new.download(ENV['DICTIONARY_FILE'])
 
-    sleep(10)
-
-    puts "Processing Dictionary..."
-    Markov.generate
-
-    sleep(10)
-
     puts "Sending Message..."
-    StockTwits.post_to_twits(message)
+    StockTwits.post_to_twits
   end
 
 end
