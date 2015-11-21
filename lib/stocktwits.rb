@@ -86,7 +86,7 @@ class StockTwits
 
   def self.in_posting_window?
     time = Time.now.in_time_zone('Eastern Time (US & Canada)')
-    time > POSTING_WINDOW[:start] && time < POSTING_WINDOW[:finish]
+    time > POSTING_WINDOW[:start] && time < POSTING_WINDOW[:finish] && !(time.saturday? || time.sunday?)
   end
 
   def self.last_message_ids
