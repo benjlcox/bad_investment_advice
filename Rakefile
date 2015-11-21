@@ -8,11 +8,11 @@ require './db/db'
 
 namespace :twits do
   task :fetch => :dotenv do
-    StockTwits.fetch_twits
+    StockTwits.new.fetch_twits
   end
 
   task :post => :dotenv do
-    StockTwits.post_message
+    StockTwits.new.post_message
   end
 end
 

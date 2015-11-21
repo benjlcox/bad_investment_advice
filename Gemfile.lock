@@ -28,6 +28,7 @@ GEM
     connection_pool (2.2.0)
     dotenv (2.0.2)
     hitimes (1.2.2)
+    holidays (2.2.0)
     httparty (0.13.7)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
@@ -88,6 +89,7 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk (~> 2)
   dotenv
+  holidays
   httparty
   json
   marky_markov

@@ -4,6 +4,7 @@ require 'cgi'
 require 'redis'
 require 'sidekiq'
 require 'sidekiq/api'
+require 'holidays'
 require 'dotenv'
 Dotenv.load
 
@@ -20,9 +21,10 @@ class StockTwits
     "MSFT" => 'Microsoft',"YHOO" => 'Yahoo'
   }
 
+  CURRENT_TIME = Time.now.in_time_zone('Eastern Time (US & Canada)')
   POSTING_WINDOW = { start: Time.parse("9:30 am EST"), finish: Time.parse("4:45 pm EST") }
 
-  def self.fetch_twits
+  def fetch_twits
     last_ids = last_message_ids
 
     SYMBOLS.keys.each do |symbol|
@@ -40,7 +42,7 @@ class StockTwits
     end
   end
 
-  def self.post_message
+  def post_message
     return unless should_send_message?
 
     delay = (1..60).to_a.sample
@@ -53,7 +55,7 @@ class StockTwits
     end
   end
 
-  def self.post_to_twits
+  def post_to_twits
     message = Markov.new.generate_sentence
     url = "https://api.stocktwits.com/api/2/messages/create.json?access_token=#{ENV['STOCKTWITS_TOKEN']}&body=#{CGI.escape(message)}"
 
@@ -70,13 +72,15 @@ class StockTwits
 
   private
 
-  def self.post_dev_message(delay)
+  def post_dev_message(delay)
     message = Markov.new.generate_sentence
     puts "Delay: #{delay}, Message: << #{message} >>"
   end
 
-  def self.should_send_message?
-    if (1..3).to_a.sample == 1 && in_posting_window?
+  def should_send_message?
+    return false if !in_posting_window? || is_a_weekend? || is_an_american_holiday?
+
+    if (1..3).to_a.sample == 1
       true
     else
       puts 'Post skipped.'
@@ -84,18 +88,25 @@ class StockTwits
     end
   end
 
-  def self.in_posting_window?
-    time = Time.now.in_time_zone('Eastern Time (US & Canada)')
-    time > POSTING_WINDOW[:start] && time < POSTING_WINDOW[:finish] && !(time.saturday? || time.sunday?)
+  def in_posting_window?
+    CURRENT_TIME > POSTING_WINDOW[:start] && CURRENT_TIME < POSTING_WINDOW[:finish]
   end
 
-  def self.last_message_ids
+  def is_a_weekend?
+    CURRENT_TIME.saturday? || CURRENT_TIME.sunday?
+  end
+
+  def is_an_american_holiday?
+    Date.current.holiday?(:us)
+  end
+
+  def last_message_ids
     SYMBOLS.keys.each_with_object({}) do |symbol, obj|
       obj[symbol] = Twit.where(stock: symbol).maximum(:key)
     end
   end
 
-  def self.save_to_db(response)
+  def save_to_db(response)
     response['messages'].each do |message|
       Twit.create(
         stock: response['symbol']['symbol'],

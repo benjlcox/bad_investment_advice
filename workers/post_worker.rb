@@ -14,7 +14,7 @@ class PostWorker
     S3.new.download(ENV['DICTIONARY_FILE'])
 
     puts "Sending Message..."
-    StockTwits.post_to_twits
+    StockTwits.new.post_to_twits
   end
 
 end
