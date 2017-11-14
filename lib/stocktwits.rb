@@ -57,7 +57,7 @@ class StockTwits
 
   def post_message_now
     if ENV['RACK_ENV'] == 'production'
-      PostWorker.perform_now
+      PostWorker.new.perform
     else
       post_dev_message(delay)
     end
