@@ -14,6 +14,10 @@ namespace :twits do
   task :post => :dotenv do
     StockTwits.new.post_message
   end
+
+  task :post_now => :dotenv do
+    StockTwits.new.post_message_now
+  end
 end
 
 namespace :markov do

@@ -23,6 +23,7 @@ GEM
       aws-sdk-core (= 2.2.0)
     bond (0.5.1)
     builder (3.2.2)
+    byebug (9.0.6)
     celluloid (0.16.0)
       timers (~> 4.0.0)
     connection_pool (2.2.0)
@@ -87,7 +88,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activerecord (< 5.0.0)
   aws-sdk (~> 2)
+  byebug
   dotenv
   holidays
   httparty
@@ -99,3 +102,6 @@ DEPENDENCIES
   sinatra
   sinatra-activerecord
   tux
+
+BUNDLED WITH
+   1.15.0

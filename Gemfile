@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 gem 'sinatra'
 gem "sinatra-activerecord"
+gem "activerecord", "< 5.0.0"
 gem 'httparty'
 gem 'marky_markov'
 gem 'rake'
@@ -11,3 +12,4 @@ gem 'aws-sdk', '~> 2'
 gem 'dotenv'
 gem 'sidekiq'
 gem 'holidays'
+gem 'byebug'

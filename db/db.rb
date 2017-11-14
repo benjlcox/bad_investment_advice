@@ -14,7 +14,6 @@ configure :production, :development do
 end
 
 class Twit < ActiveRecord::Base
-
 	def self.last_ids
 		StockTwits::SYMBOLS.keys.each_with_object({}) do |symbol, obj|
       obj[symbol] = Twit.where(stock: symbol).maximum(:key)

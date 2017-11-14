@@ -55,6 +55,14 @@ class StockTwits
     end
   end
 
+  def post_message_now
+    if ENV['RACK_ENV'] == 'production'
+      PostWorker.perform_now
+    else
+      post_dev_message(delay)
+    end
+  end
+
   def post_to_twits
     message = Markov.new.generate_sentence
     url = "https://api.stocktwits.com/api/2/messages/create.json?access_token=#{ENV['STOCKTWITS_TOKEN']}&body=#{CGI.escape(message)}"

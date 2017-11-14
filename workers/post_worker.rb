@@ -16,5 +16,4 @@ class PostWorker
     puts "Sending Message..."
     StockTwits.new.post_to_twits
   end
-
 end
