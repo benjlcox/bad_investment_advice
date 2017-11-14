@@ -18,7 +18,7 @@ class StockTwits
     "FB" => 'Facebook',"ETSY" => 'Etsy',"TWTR" => "Twitter","GPRO" => 'GoPro',"AMZN" => 'Amazon',
     "GOOG" => 'Google',"AAPL" => 'Apple',"BBRY" => 'Blackberry',"GRPN" => 'Groupon',"TSLA" => 'Tesla',
     "NFLX" => 'Netflix',"CRM" => 'Salesforce',"BABA" => 'Alibaba',"LNKD" => 'LinkedIn',
-    "MSFT" => 'Microsoft',"YHOO" => 'Yahoo'
+    "MSFT" => 'Microsoft',"AABA" => 'Altaba', "MDB" => 'MongoDB', 'MDB'
   }
 
   CURRENT_TIME = Time.now.in_time_zone('Eastern Time (US & Canada)')
