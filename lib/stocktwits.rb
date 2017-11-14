@@ -59,7 +59,7 @@ class StockTwits
     if ENV['RACK_ENV'] == 'production'
       PostWorker.new.perform
     else
-      post_dev_message(delay)
+      post_dev_message
     end
   end
 
@@ -80,7 +80,7 @@ class StockTwits
 
   private
 
-  def post_dev_message(delay)
+  def post_dev_message(delay=0)
     message = Markov.new.generate_sentence
     puts "Delay: #{delay}, Message: << #{message} >>"
   end
