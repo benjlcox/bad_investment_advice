@@ -92,7 +92,7 @@ class StockTwits
 
   def send_likes(messages)
     messages.each do |message|
-      next unless rand(1..75) == 1
+      next unless rand(1..100) == 1
 
       delay = rand(1..30)
       puts "Liking #{message['id']} in #{delay} minutes"
