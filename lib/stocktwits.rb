@@ -65,7 +65,10 @@ class StockTwits
 
   def post_to_twits
     message = Markov.new.generate_sentence
-    url = "https://api.stocktwits.com/api/2/messages/create.json?access_token=#{ENV['STOCKTWITS_TOKEN']}&body=#{CGI.escape(message)}"
+    sentiment = choose_sentiment
+    url = "https://api.stocktwits.com/api/2/messages/create.json?access_token=#{ENV['STOCKTWITS_TOKEN']}"\
+      "&body=#{CGI.escape(message)}"
+      "&sentiment=#{sentiment}"
 
     puts "Sending #{url}"
 
@@ -109,6 +112,14 @@ class StockTwits
 
   def is_an_american_holiday?
     Date.current.holiday?(:us)
+  end
+
+  def choose_sentiment
+    if [1..3].sample === 1
+      ['bearish', 'bullish'].sample
+    else
+      'neutral'
+    end
   end
 
   def last_message_ids
