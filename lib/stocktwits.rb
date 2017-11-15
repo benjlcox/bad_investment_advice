@@ -31,8 +31,8 @@ class StockTwits
     last_ids = last_message_ids
 
     SYMBOLS.keys.each do |symbol|
-      params = "?since=#{last_ids[symbol]}" unless last_ids[symbol].nil?
-      url = "https://api.stocktwits.com/api/2/streams/symbol/#{symbol}.json#{params}"
+      params = "since=#{last_ids[symbol]}&" unless last_ids[symbol].nil?
+      url = "https://api.stocktwits.com/api/2/streams/symbol/#{symbol}.json?#{params}access_token=#{ENV['STOCKTWITS_TOKEN']}"
       puts "Fetching #{symbol} with #{url}"
       response = HTTParty.get(url, :verify => false)
 
