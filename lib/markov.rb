@@ -47,7 +47,7 @@ class Markov
   end
 
   def scrub_links(sentence)
-    remove_matches(sentence, ['http://stks.', ' chart', /co\/.{5}[\s\z]/])
+    remove_matches(sentence, ['http://stks.', ' chart', /co\/.{5}[\s\z]/, /http.+[\s]/, /https.+[\s]/])
   end
 
   def remove_bad_punctuation(sentence)
