@@ -6,14 +6,17 @@ require 'sidekiq'
 require 'sidekiq/api'
 require 'holidays'
 require 'dotenv'
+require 'byebug'
 Dotenv.load
 
 require './db/db'
 require './lib/markov'
 require './workers/post_worker'
+require './workers/like_worker'
 $redis = Redis.new(url: ENV["REDIS_URL"])
 
 class StockTwits
+  BASE_URL = "https://api.stocktwits.com/api/2"
   SYMBOLS = {
     "FB" => 'Facebook',"ETSY" => 'Etsy',"TWTR" => "Twitter","GPRO" => 'GoPro',"AMZN" => 'Amazon',
     "GOOG" => 'Google',"AAPL" => 'Apple',"BBRY" => 'Blackberry',"GRPN" => 'Groupon',"TSLA" => 'Tesla',
@@ -33,12 +36,18 @@ class StockTwits
       puts "Fetching #{symbol} with #{url}"
       response = HTTParty.get(url, :verify => false)
 
+      if response.code == 429
+        puts 'Rate limit exceeded'
+        break
+      end
+
       if response['messages'].empty?
         puts "Empty. Skipping."
         next
       end
 
       save_to_db(response)
+      send_likes(response['messages'])
     end
   end
 
@@ -66,7 +75,7 @@ class StockTwits
   def post_to_twits
     message = Markov.new.generate_sentence
     sentiment = choose_sentiment
-    url = "https://api.stocktwits.com/api/2/messages/create.json?access_token=#{ENV['STOCKTWITS_TOKEN']}"\
+    url = "#{BASE_URL}/messages/create.json?access_token=#{ENV['STOCKTWITS_TOKEN']}"\
       "&body=#{CGI.escape(message)}"
       "&sentiment=#{sentiment}"
 
@@ -79,6 +88,27 @@ class StockTwits
     else
       puts "Post Complete."
     end
+  end
+
+  def send_likes(messages)
+    messages.each do |message|
+      next unless rand(1..75) == 1
+
+      delay = rand(1..30)
+      puts "Liking #{message['id']} in #{delay} minutes"
+
+      if ENV['RACK_ENV'] == 'production'
+        LikeWorker.perform_in(delay.minutes, message['id'])
+      else
+        "Like message: #{message['id']}"
+      end
+    end
+  end
+
+  def post_like(id)
+    url = "#{BASE_URL}/messages/like.json?access_token=#{ENV['STOCKTWITS_TOKEN']}"
+
+    HTTParty.post(url, { body: "id=#{id}" })
   end
 
   private
@@ -94,7 +124,7 @@ class StockTwits
       return false
     end
 
-    if (1..3).to_a.sample == 1
+    if rand(1..3) == 1
       true
     else
       puts 'Dice did not roll 1. Post skipped.'
@@ -115,7 +145,7 @@ class StockTwits
   end
 
   def choose_sentiment
-    if [1..3].sample === 1
+    if rand(1..3) === 1
       ['bearish', 'bullish'].sample
     else
       'neutral'
