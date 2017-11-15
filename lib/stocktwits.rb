@@ -54,13 +54,15 @@ class StockTwits
   def post_message
     return unless should_send_message?
 
-    delay = (1..60).to_a.sample
+    rand(1..3).times do |i|
+      delay = rand(1..60)
 
-    if ENV['RACK_ENV'] == 'production'
-      puts "POST QUEUED FOR #{delay} MINUTES"
-      PostWorker.perform_in(delay.minutes)
-    else
-      post_dev_message(delay)
+      if ENV['RACK_ENV'] == 'production'
+        puts "POST QUEUED FOR #{delay} MINUTES"
+        PostWorker.perform_in(delay.minutes)
+      else
+        post_dev_message(delay)
+      end
     end
   end
 
@@ -121,14 +123,9 @@ class StockTwits
   def should_send_message?
     if !in_posting_window? || is_a_weekend? || is_an_american_holiday?
       puts 'Posting conditions not met.'
-      return false
-    end
-
-    if rand(1..2) == 1
-      true
-    else
-      puts 'Dice did not roll 1. Post skipped.'
       false
+    else
+      true
     end
   end
 
