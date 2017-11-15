@@ -78,7 +78,7 @@ class StockTwits
     message = Markov.new.generate_sentence
     sentiment = choose_sentiment
     url = "#{BASE_URL}/messages/create.json?access_token=#{ENV['STOCKTWITS_TOKEN']}"\
-      "&body=#{CGI.escape(message)}"
+      "&body=#{CGI.escape(message)}"\
       "&sentiment=#{sentiment}"
 
     puts "Sending #{url}"
