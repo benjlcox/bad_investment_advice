@@ -124,7 +124,7 @@ class StockTwits
       return false
     end
 
-    if rand(1..3) == 1
+    if rand(1..2) == 1
       true
     else
       puts 'Dice did not roll 1. Post skipped.'
