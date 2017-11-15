@@ -86,12 +86,15 @@ class StockTwits
   end
 
   def should_send_message?
-    return false if !in_posting_window? || is_a_weekend? || is_an_american_holiday?
+    if !in_posting_window? || is_a_weekend? || is_an_american_holiday?
+      puts 'Posting conditions not met.'
+      return false
+    end
 
     if (1..3).to_a.sample == 1
       true
     else
-      puts 'Post skipped.'
+      puts 'Dice did not roll 1. Post skipped.'
       false
     end
   end
