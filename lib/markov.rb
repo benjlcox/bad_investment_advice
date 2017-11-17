@@ -51,7 +51,7 @@ class Markov
   end
 
   def remove_bad_punctuation(sentence)
-    remove_matches(sentence, [/\s\./, /"/, /:/])
+    remove_matches(sentence, [/\./, /"/, /:/])
   end
 
   def check_symbol(sentence)

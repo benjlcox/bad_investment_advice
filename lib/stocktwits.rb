@@ -108,6 +108,7 @@ class StockTwits
   end
 
   def post_like(id)
+    return unless should_send_message?
     url = "#{BASE_URL}/messages/like.json?access_token=#{ENV['STOCKTWITS_TOKEN']}"
 
     HTTParty.post(url, { body: "id=#{id}" })
